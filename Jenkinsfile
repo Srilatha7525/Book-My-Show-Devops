@@ -29,7 +29,7 @@ pipeline {
         '''
       }
     }
-    stage('Quality Gate') {
+    stage('SonarQube Quality Gate') {
       steps {
         script {
           waitForQualityGate abortPipeline: false, credentialsId: 'SonarQube-secret'
