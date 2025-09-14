@@ -1,9 +1,13 @@
 pipeline {
   agent any
+  tools {
+      jdk 'jdk17'
+      nodejs 'node24'
+  }
   environment {
-    PATH = "/opt/sonar-scanner/bin:${env.PATH}"
     DOCKER_IMAGE = "sri642/bms-bms:${BUILD_NUMBER}"
     DOCKERHUB_CREDENTIALS = credentials('Docker-token')
+    SCANNER_HOME = tool 'sonar-scanner'
   }
   stages {
     stage('Clean Workspace') {
@@ -16,21 +20,14 @@ pipeline {
         git branch: 'feature/docker-integration', url: 'https://github.com/Srilatha7525/Book-My-Show-Devops.git'
       }
     }
-    stage('Check Java Version') {
-       steps {
-         
-         sh 'echo $JAVA_HOME'
-      }
-    }
 
     stage('SonarQube Analysis') {
        steps {
-         withSonarQubeEnv('sonar-server') {
                     sh ''' 
-                    $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BMS \
-                    -Dsonar.projectKey=BMS 
+                    $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BOOK-MY-SHOW \
+                    -Dsonar.projectKey=Book-my-show 
                    '''
-      }
+      
     }
   }
 
@@ -60,8 +57,11 @@ pipeline {
       steps {
         script {
           docker.withRegistry('', env.DOCKERHUB_CREDENTIALS) {
-            def app = docker.build(env.DOCKER_IMAGE)
-            app.push()
+            echo "Building Docker image..."
+            docker build --no-cache -t sri642/bms:latest -f bookmyshow-app/Dockerfile bookmyshow-app
+
+            echo "Pushing Docker image to registry..."
+            docker push sri642/bms:latest
           }
         }
       }
@@ -75,7 +75,7 @@ pipeline {
               docker rm -f $cid
             fi
           '''
-          sh "docker run -d -p 3000:3000 ${DOCKER_IMAGE}"
+          sh "docker run -d -p 3000:3000 sri/bms:latest"
         }
       }
     }
