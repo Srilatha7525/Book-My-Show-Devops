@@ -1,8 +1,8 @@
 pipeline {
   agent any
   tools {
-      jdk 'jdk17'
-      nodejs 'node24'
+    jdk 'jdk17'
+    nodejs 'node24'
   }
   environment {
     DOCKER_IMAGE = "sri642/bms-bms:${BUILD_NUMBER}"
@@ -20,17 +20,13 @@ pipeline {
         git branch: 'feature/docker-integration', url: 'https://github.com/Srilatha7525/Book-My-Show-Devops.git'
       }
     }
-
     stage('SonarQube Analysis') {
-       steps {
-                    sh ''' 
-                    $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BOOK-MY-SHOW \
-                    -Dsonar.projectKey=Book-my-show 
-                   '''
-      
+      steps {
+        sh ''' 
+          $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BOOK-MY-SHOW -Dsonar.projectKey=Book-my-show
+        '''
+      }
     }
-  }
-
     stage('Quality Gate') {
       steps {
         script {
@@ -41,15 +37,15 @@ pipeline {
     stage('Install Dependencies') {
       steps {
         sh '''
-        cd bookmyshow-app
-        ls -la  # Verify package.json exists
-        if [ -f package.json ]; then
-            rm -rf node_modules package-lock.json  # Remove old dependencies
-            npm install  # Install fresh dependencies
-        else
-            echo "Error: package.json not found in bookmyshow-app!"
-            exit 1
-        fi
+          cd bookmyshow-app
+          ls -la  # Verify package.json exists
+          if [ -f package.json ]; then
+              rm -rf node_modules package-lock.json  # Remove old dependencies
+              npm install  # Install fresh dependencies
+          else
+              echo "Error: package.json not found in bookmyshow-app!"
+              exit 1
+          fi
         '''
       }
     }
@@ -58,10 +54,9 @@ pipeline {
         script {
           docker.withRegistry('', env.DOCKERHUB_CREDENTIALS) {
             echo "Building Docker image..."
-            docker build --no-cache -t sri642/bms:latest -f bookmyshow-app/Dockerfile bookmyshow-app
-
+            def app = docker.build("sri642/bms:latest", "-f bookmyshow-app/Dockerfile bookmyshow-app")
             echo "Pushing Docker image to registry..."
-            docker push sri642/bms:latest
+            app.push()
           }
         }
       }
@@ -75,7 +70,7 @@ pipeline {
               docker rm -f $cid
             fi
           '''
-          sh "docker run -d -p 3000:3000 sri/bms:latest"
+          sh "docker run -d -p 3000:3000 sri642/bms:latest"
         }
       }
     }
