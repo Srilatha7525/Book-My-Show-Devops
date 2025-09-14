@@ -16,6 +16,13 @@ pipeline {
         git branch: 'feature/docker-integration', url: 'https://github.com/Srilatha7525/Book-My-Show-Devops.git'
       }
     }
+    stage('Check Java Version') {
+       steps {
+         sh 'java -version'
+         sh 'echo $JAVA_HOME'
+      }
+    }
+
     stage('SonarQube Analysis') {
       steps {
         withSonarQubeEnv('SonarQube') {
