@@ -29,7 +29,7 @@ pipeline {
            sh '''
            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
            export PATH=$JAVA_HOME/bin:$PATH
-           $JAVA_HOME/bin/java -jar /opt/sonar-scanner/lib/sonar-scanner-cli.jar -Dsonar.projectKey=BookMyShow -Dsonar.sources=.          
+           $JAVA_HOME/bin/java -jar /opt/sonar-scanner/lib/sonar-scanner-cli-4.8.0.2856.jar -Dsonar.projectKey=BookMyShow -Dsonar.sources=.
         '''
       }
     }
