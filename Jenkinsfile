@@ -29,8 +29,8 @@ pipeline {
            sh '''
            export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
            export PATH=$JAVA_HOME/bin:$PATH
-          sonar-scanner -Dsonar.projectKey=BookMyShow -Dsonar.sources=.
-          '''
+           $JAVA_HOME/bin/java -jar /opt/sonar-scanner/lib/sonar-scanner-cli.jar -Dsonar.projectKey=BookMyShow -Dsonar.sources=.          
+        '''
       }
     }
   }
