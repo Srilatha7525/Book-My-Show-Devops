@@ -6,7 +6,7 @@ pipeline {
   }
   environment {
     DOCKER_IMAGE = "sri642/bms-bms:${BUILD_NUMBER}"
-    DOCKERHUB_CREDENTIALS = credentials('Docker-token')
+    DOCKERHUB_CREDENTIALS_ID = 'Docker-token'
     SCANNER_HOME = tool 'sonar-scanner'
   }
   stages {
@@ -55,7 +55,7 @@ pipeline {
     stage('Docker Build & Push') {
       steps {
         script {
-          docker.withRegistry('', env.DOCKERHUB_CREDENTIALS) {
+          docker.withRegistry('', env.DOCKERHUB_CREDENTIALS_ID) {          
             echo "Building Docker image..."
             def app = docker.build("sri642/bms:latest", "-f bookmyshow-app/Dockerfile bookmyshow-app")
             echo "Pushing Docker image to registry..."
