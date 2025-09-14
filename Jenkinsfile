@@ -18,19 +18,18 @@ pipeline {
     }
     stage('Check Java Version') {
        steps {
-         sh 'java -version'
+         
          sh 'echo $JAVA_HOME'
       }
     }
 
     stage('SonarQube Analysis') {
        steps {
-         withSonarQubeEnv('SonarQube') {
-           sh '''
-           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-           export PATH=$JAVA_HOME/bin:$PATH
-           $JAVA_HOME/bin/java -jar /opt/sonar-scanner/lib/sonar-scanner-cli-4.8.0.2856.jar -Dsonar.projectKey=BookMyShow -Dsonar.sources=.
-        '''
+         withSonarQubeEnv('sonar-server') {
+                    sh ''' 
+                    $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BMS \
+                    -Dsonar.projectKey=BMS 
+                   '''
       }
     }
   }
