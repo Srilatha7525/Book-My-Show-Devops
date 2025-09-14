@@ -22,8 +22,10 @@ pipeline {
     }
     stage('SonarQube Analysis') {
       steps {
+        withSonarQubeEnv('sonar-server') {
         sh ''' 
-          $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BOOK-MY-SHOW -Dsonar.projectKey=Book-my-show
+          $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BOOK-MY-SHOW \
+          -Dsonar.projectKey=Book-my-show
         '''
       }
     }
