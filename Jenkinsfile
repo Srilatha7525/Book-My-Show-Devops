@@ -24,12 +24,17 @@ pipeline {
     }
 
     stage('SonarQube Analysis') {
-      steps {
-        withSonarQubeEnv('SonarQube') {
-          sh 'sonar-scanner -Dsonar.projectKey=BookMyShow -Dsonar.sources=.'
-        }
+       steps {
+         withSonarQubeEnv('SonarQube') {
+           sh '''
+           export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+           export PATH=$JAVA_HOME/bin:$PATH
+          sonar-scanner -Dsonar.projectKey=BookMyShow -Dsonar.sources=.
+          '''
       }
     }
+  }
+
     stage('Quality Gate') {
       steps {
         script {
